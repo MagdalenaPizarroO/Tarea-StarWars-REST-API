@@ -79,6 +79,14 @@ def get_planets():
     result = list(map(lambda planet: planet.serialize(), get_all_planets))
     return jsonify(result)
 
+@app.route('/planets', methods=['POST'])
+def add_planet():
+    body = request.get_json()
+    new_planet = Planets(name=body['name'])
+    db.session.add(new_planet)
+    db.session.commit()
+    return jsonify({"msg": "New planet added"}), 201
+
 @app.route('/planets/<int:planets_id>', methods=['GET'])
 def get_planet(planets_id):
     get_planet = Planets.query.get(planets_id)
@@ -92,6 +100,14 @@ def get_users():
     all_users = User.query.all()
     result = list(map(lambda user: user.serialize(), all_users))
     return jsonify(result)
+
+@app.route('/users', methods=['POST'])
+def add_user():
+    body = request.get_json()
+    new_user = User(email=body['email'], password=body['password'], is_active=True)
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({"msg": "New user added"}), 201
 
 @app.route('/users/<int:user_id>/favorites', methods=['GET'])
 def get_favorites(user_id):
